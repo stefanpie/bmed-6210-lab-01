@@ -59,7 +59,7 @@ for flair_image_fp in flair_images:
     for idx, r in enumerate(regions):
         pixel_coords = np.array(r.coords)
         pixel_values = img_data[pixel_coords[:, 0], pixel_coords[:, 1]]
-        avg = np.mean(pixel_values)
+        avg = np.median(pixel_values)
 
         image_data_df =  pd.concat([image_data_df, pd.DataFrame({
             'TI': TI,

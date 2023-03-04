@@ -21,17 +21,32 @@ for material, T1_val in T1_values.items():
     eq = right.subs(T1, T1_val).subs(M0, 1)
     equations[material] = eq
 
-fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+fig, ax = plt.subplots(1, 2, figsize=(10, 6))
 for material, eq in equations.items():
-    print(material, eq)
+    print(f"{material}: {eq}")
     eq_plot = sp.lambdify("t", eq, "numpy")
-    t = np.linspace(0, 3000, 100)
+    t = np.linspace(0, 4000, 1000)
     Mz = eq_plot(t)
-    ax.plot(t, Mz, label=material)
+    line = ax[0].plot(t, Mz, label=material)
+    color = line[0].get_color()
+    ax[1].plot(t, np.abs(Mz), color=color, ls="--", label=f"{material} (abs)")
     t_eq = sp.solve(eq, "t")[0]
-    print("t_eq", t_eq.evalf())
+    print(f"t_eq: {t_eq.evalf()}")
 
-ax.set_xlabel("t")
-ax.set_ylabel("Mz")
-ax.legend()
-plt.show()
+ax[0].set_title("Magnetization vs. Time after Inversion Pulse")
+ax[0].set_xlim(0, 4000)
+ax[0].set_ylim(-1, 1)
+ax[0].set_xlabel("t")
+ax[0].set_ylabel("Mz")
+
+ax[1].set_title("abs(Magnetization) vs. Time after Inversion Pulse")
+ax[1].set_xlim(0, 4000)
+ax[1].set_ylim(0, 1)
+ax[1].set_xlabel("t")
+ax[1].set_ylabel("abs(Mz)")
+
+ax[0].legend()
+ax[1].legend()
+
+plt.tight_layout()
+plt.savefig("pre_lab_stuff.png", dpi=300)
